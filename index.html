@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YMCA Digital Sign</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      background-color: black;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+    .left-side {
+      width: 70%;
+      position: relative;
+      background-color: #000; /* black for pictures/videos area */
+    }
+    .right-side {
+      width: 30%;
+      background: linear-gradient(180deg, #00aeef 0%, #8a2be2 100%); /* blue to purple gradient */
+      color: white;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      position: relative;
+      font-weight: bold;
+    }
+    .clock {
+      font-size: 80px;
+      color: #FFD100; /* YMCA Yellow */
+      text-shadow: 2px 2px #000;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .weather {
+      font-size: 50px;
+      color: #EF3C42; /* YMCA Red */
+      text-align: center;
+    }
+    .weather-icon {
+      width: 60px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .media-container img,
+    .media-container iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: none;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-side media-container">
+      <img id="photo1" src="images/Fall 1 TV Slides - Untitled Page.jpeg" alt="YMCA Photo 1" />
+      <img id="photo2" src="images/Personal Training 2025.jpg" alt="YMCA Photo 2" />
+      <img id="photo3" src="images/Rock Steady Boxing TV (1).png" alt="YMCA Photo 3" />
+      <img id="photo4" src="images/YMCA Day Camp 2025 - Untitled Page (1).jpeg" alt="YMCA Photo 4" />
+      <iframe id="video"
+        src="https://www.youtube.com/embed/NYOnvegxZrM?autoplay=1&mute=1&loop=1&playlist=NYOnvegxZrM"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <div class="right-side">
+      <div class="clock" id="clock"></div>
+      <div class="weather" id="weather">Loading weather...</div>
+    </div>
+  </div>
+
+  <script>
+    // Weather
+    async function updateWeather() {
+      const apiKey = "5ab0d9170706b9fc7fb28f106338bf6b";
+      const city = "Duluth";
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const temp = Math.round(data.main.temp);
+        const condition = data.weather[0].main;
+        const iconCode = data.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+        document.getElementById("weather").innerHTML = `
+          <img src="${iconUrl}" class="weather-icon" alt="Weather Icon">
+          ${city}: ${temp}°F, ${condition}
+        `;
+      } catch (error) {
+        document.getElementById("weather").textContent = "Weather unavailable";
+      }
+    }
+
+    setInterval(updateWeather, 60000);
+    updateWeather();
+
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById("clock").textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Slideshow
+    const mediaItems = [
+      document.getElementById("photo1"),
+      document.getElementById("photo2"),
+      document.getElementById("photo3"),
+      document.getElementById("photo4"),
+      document.getElementById("video")
+    ];
+
+    let currentIndex = 0;
+
+    function showNextItem() {
+      mediaItems.forEach(item => item.style.display = "none");
+      mediaItems[currentIndex].style.display = "block";
+      currentIndex = (currentIndex + 1) % mediaItems.length;
+      let delay = (currentIndex === mediaItems.length - 1) ? 120000 : 60000; // longer delay for video
+      setTimeout(showNextItem, delay);
+    }
+
+    showNextItem();
+  </script>
+
+</body>
+</html>
