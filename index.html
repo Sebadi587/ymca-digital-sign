@@ -8,27 +8,32 @@
 </head>
 <body>
 
-  <div class="container">
-    <div class="left-panel">
-      <div class="clock" id="clock"></div>
-      <div class="weather" id="weather">Loading weather...</div>
-    </div>
+  <div class="media-container">
+    <div class="media-left">
+      <img id="photo1" src="Fall 1 TV Slides - Untitled Page.jpeg" alt="YMCA Photo 1" />
+      <img id="photo2" src="Personal Training 2025.jpg" alt="YMCA Photo 2" />
+      <img id="photo3" src="Rock Steady Boxing TV (1).png" alt="YMCA Photo 3" />
+      <img id="photo4" src="YMCA Day Camp 2025 - Untitled Page (1).jpeg" alt="YMCA Photo 4" />
 
-    <div class="right-panel">
-      <img id="photo1" src="Fall 1 TV Slides - Untitled Page.jpeg" alt="YMCA Photo 1">
-      <img id="photo2" src="Personal Training 2025.jpg" alt="YMCA Photo 2">
-      <img id="photo3" src="Rock Steady Boxing TV (1).png" alt="YMCA Photo 3">
-      <img id="photo4" src="YMCA Day Camp 2025 - Untitled Page (1).jpeg" alt="YMCA Photo 4">
       <iframe id="video"
         src="https://www.youtube.com/embed/NYOnvegxZrM?autoplay=1&mute=1&loop=1&playlist=NYOnvegxZrM"
         allow="autoplay; encrypted-media"
         allowfullscreen>
       </iframe>
     </div>
+
+    <div class="media-right">
+      <div class="clock" id="clock"></div>
+      <div class="weather" id="weather">Loading weather...</div>
+    </div>
+
+    <div class="welcome">
+      Welcome to the YMCA! <img src="images/y-logo.png" alt="YMCA Logo" />
+    </div>
   </div>
 
   <script>
-    // Weather update
+    // Weather
     async function updateWeather() {
       const apiKey = "5ab0d9170706b9fc7fb28f106338bf6b";
       const city = "Duluth";
@@ -43,17 +48,18 @@
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
         document.getElementById("weather").innerHTML = `
-          <img src="${iconUrl}" class="weather-icon" alt="weather icon">
+          <img src="${iconUrl}" class="weather-icon" alt="weather icon" />
           ${city}: ${temp}°F, ${condition}
         `;
       } catch (error) {
         document.getElementById("weather").textContent = "Weather unavailable";
       }
     }
+
     setInterval(updateWeather, 60000);
     updateWeather();
 
-    // Clock update
+    // Clock
     function updateClock() {
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, '0');
@@ -61,6 +67,7 @@
       const seconds = now.getSeconds().toString().padStart(2, '0');
       document.getElementById("clock").textContent = `${hours}:${minutes}:${seconds}`;
     }
+
     setInterval(updateClock, 1000);
     updateClock();
 
@@ -74,13 +81,17 @@
     ];
 
     let currentIndex = 0;
+
     function showNextItem() {
       mediaItems.forEach(item => item.style.display = "none");
       mediaItems[currentIndex].style.display = "block";
       currentIndex = (currentIndex + 1) % mediaItems.length;
+
+      // Video shows for 120 seconds, images for 60 seconds
       let delay = (currentIndex === mediaItems.length - 1) ? 120000 : 60000;
       setTimeout(showNextItem, delay);
     }
+
     showNextItem();
   </script>
 </body>
